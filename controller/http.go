@@ -16,9 +16,9 @@ import (
 const bearerPrefix = "bearer"
 
 type StartGenericActivityWorkflowRequest struct {
-	Name      string
-	QueueName string
-	Request   interface{}
+	ActivityName    string
+	QueueName       string
+	ActivityRequest interface{}
 }
 
 func MakeStarterHandleFunc(temporalClient client.Client) func(http.ResponseWriter, *http.Request) {
@@ -72,11 +72,13 @@ func extractTokenFromHeaders(req *http.Request, tokenHeaderName string) string {
 	return authHeaderParts[1]
 }
 
-func executeWorkflow(ctx context.Context, temporalClient client.Client, wReq StartGenericActivityWorkflowRequest) (resp interface{}, err error) {
+func executeWorkflow(ctx context.Context,
+	temporalClient client.Client, wReq StartGenericActivityWorkflowRequest) (resp interface{}, err error) {
 	workflowOptions := client.StartWorkflowOptions{
 		TaskQueue: temporal_starter.WorkflowQueue,
 	}
-	workflowRun, err := temporalClient.ExecuteWorkflow(ctx, workflowOptions, workflow.StartGenericActivityWorkflow, wReq)
+	workflowRun, err := temporalClient.ExecuteWorkflow(ctx, workflowOptions, workflow.StartGenericActivityWorkflow,
+		wReq.ActivityName, wReq.QueueName, wReq.ActivityRequest)
 	if err != nil {
 		return
 	}

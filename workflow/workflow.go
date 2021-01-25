@@ -8,7 +8,7 @@ import (
 	"go.temporal.io/sdk/workflow"
 )
 
-func StartGenericActivityWorkflow(ctx workflow.Context, queueName, activityName string, req interface{}) (resp interface{}, err error) {
+func StartGenericActivityWorkflow(ctx workflow.Context, activityName, queueName string, req interface{}) (resp interface{}, err error) {
 	if req == nil {
 		err = temporal_microservices_workflow.BusinessError{Message: "there no activity request to process"}
 		return
